@@ -25,17 +25,35 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User register(User usuario) {
 
-        // validar correo
-        repo.findByEmail(usuario.getEmail()).ifPresent(u -> {
-            throw new RuntimeException("El correo ya está registrado");
-        });
+        System.out.println(">>> EMAIL RECIBIDO = '" + usuario.getEmail() + "'");
+    System.out.println(">>> PASSWORD RECIBIDO = '" + usuario.getPassword() + "'");
+    System.out.println(">>> NAME RECIBIDO = '" + usuario.getName() + "'");
 
-        // encriptar contraseña
-        String passEncriptada = passwordEncoder.encode(usuario.getPassword());
-        usuario.setPassword(passEncriptada);
-
-        return repo.save(usuario);
+    if (usuario.getEmail() == null || usuario.getEmail().trim().isEmpty()) {
+        throw new RuntimeException("Email vacío");
     }
+
+    String emailLimpio = usuario.getEmail().trim().toLowerCase();
+    usuario.setEmail(emailLimpio);
+
+    // Validación de correo único
+    System.out.println(">>> BUSCANDO EMAIL EN BD...");
+    if (repo.findByEmail(emailLimpio).isPresent()) {
+        throw new RuntimeException("El correo ya está registrado");
+    }
+
+    // Encriptación
+    System.out.println(">>> ENCRIPTANDO PASSWORD...");
+    usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+    // Guardar usuario
+    System.out.println(">>> GUARDANDO USUARIO...");
+    User saved = repo.save(usuario);
+
+    System.out.println(">>> USUARIO GUARDADO CON ID = " + saved.getId());
+    return saved;
+}
+
 
     @Override
     public String login(LoginRequest request) {

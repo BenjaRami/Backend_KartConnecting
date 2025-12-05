@@ -11,7 +11,12 @@ import lombok.Data;
 public class Jugador {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "jug_seq")
+    @SequenceGenerator(
+            name = "jug_seq",
+            sequenceName = "seq_jugadores",
+            allocationSize = 1
+    )
     @Column(name = "ID_JUGADOR")
     private Long id_jugador;
 
