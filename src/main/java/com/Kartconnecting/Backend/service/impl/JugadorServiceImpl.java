@@ -1,9 +1,7 @@
 package com.Kartconnecting.Backend.service.impl;
 
 import com.Kartconnecting.Backend.model.Jugador;
-import com.Kartconnecting.Backend.model.User;
 import com.Kartconnecting.Backend.repository.JugadorRepository;
-import com.Kartconnecting.Backend.repository.UserRepository;
 import com.Kartconnecting.Backend.service.JugadorService;
 import org.springframework.stereotype.Service;
 
@@ -13,63 +11,64 @@ import java.util.List;
 public class JugadorServiceImpl implements JugadorService {
 
     private final JugadorRepository jugadorRepository;
-    private final UserRepository userRepository;
 
-    public JugadorServiceImpl(JugadorRepository jugadorRepository, UserRepository userRepository) {
+    public JugadorServiceImpl(JugadorRepository jugadorRepository) {
         this.jugadorRepository = jugadorRepository;
-        this.userRepository = userRepository;
     }
 
+    // ========================
+    //  LISTAR
+    // ========================
     @Override
     public List<Jugador> listar() {
         return jugadorRepository.findAll();
     }
 
+    // ========================
+    //  OBTENER POR ID
+    // ========================
     @Override
     public Jugador obtenerPorId(Integer id) {
         return jugadorRepository.findById(id).orElse(null);
     }
 
+    // ========================
+    //  CREAR
+    // ========================
     @Override
     public Jugador crear(Jugador jugador) {
-
-        // Guardar jugador
-        Jugador nuevo = jugadorRepository.save(jugador);
-
-        // Crear usuario
-        User user = new User();
-        user.setEmail(jugador.getCorreo());
-        user.setPassword(jugador.getPassword());
-        user.setNombre(jugador.getNombreGamer());
-
-        userRepository.save(user);
-
-        return nuevo;
+        return jugadorRepository.save(jugador);
     }
 
+    // ========================
+    //  ACTUALIZAR (update COMPLETO)
+    // ========================
     @Override
-    public Jugador actualizar(Integer id, Jugador jugador) {
-        Jugador existente = jugadorRepository.findById(id).orElse(null);
+    public Jugador actualizar(Integer id, Jugador jugadorActualizado) {
 
-        if (existente == null) {
-            return null;
-        }
+        return jugadorRepository.findById(id)
+                .map(jugador -> {
 
-        existente.setNombreGamer(jugador.getNombreGamer());
-        existente.setCorreo(jugador.getCorreo());
-        existente.setPais(jugador.getPais());
-        existente.setNivelCompetitivo(jugador.getNivelCompetitivo());
-        existente.setBio(jugador.getBio());
-        existente.setDisponible(jugador.getDisponible());
-        existente.setPassword(jugador.getPassword());
+                    // Reemplaza todos los campos
+                    jugador.setNombreGamer(jugadorActualizado.getNombreGamer());
+                    jugador.setCorreo(jugadorActualizado.getCorreo());
+                    jugador.setPais(jugadorActualizado.getPais());
+                    jugador.setNivel(jugadorActualizado.getNivel());
+                    jugador.setBio(jugadorActualizado.getBio());
 
-        return jugadorRepository.save(existente);
+                    return jugadorRepository.save(jugador);
+                })
+                .orElse(null);
     }
 
+    // ========================
+    //  ELIMINAR
+    // ========================
     @Override
     public void eliminar(Integer id) {
         jugadorRepository.deleteById(id);
     }
 }
+
 
 

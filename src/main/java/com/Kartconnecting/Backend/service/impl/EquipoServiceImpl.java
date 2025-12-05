@@ -10,41 +10,60 @@ import java.util.List;
 @Service
 public class EquipoServiceImpl implements EquipoService {
 
-    private final EquipoRepository repo;
+    private final EquipoRepository equipoRepository;
 
-    public EquipoServiceImpl(EquipoRepository repo) {
-        this.repo = repo;
+    public EquipoServiceImpl(EquipoRepository equipoRepository) {
+        this.equipoRepository = equipoRepository;
     }
 
+    // ========================
+    // LISTAR
+    // ========================
     @Override
     public List<Equipo> listar() {
-        return repo.findAll();
+        return equipoRepository.findAll();
     }
 
+    // ========================
+    // OBTENER POR ID
+    // ========================
     @Override
     public Equipo obtenerPorId(Integer id) {
-        return repo.findById(id).orElse(null);
+        return equipoRepository.findById(id).orElse(null);
     }
 
+    // ========================
+    // CREAR
+    // ========================
     @Override
     public Equipo crear(Equipo equipo) {
-        return repo.save(equipo);
+        return equipoRepository.save(equipo);
     }
 
+    // ========================
+    // ACTUALIZAR (update completo)
+    // ========================
     @Override
-    public Equipo actualizar(Integer id, Equipo equipo) {
-        Equipo existente = obtenerPorId(id);
-        if (existente == null) return null;
+    public Equipo actualizar(Integer id, Equipo equipoActualizado) {
 
-        existente.setNombre(equipo.getNombre());
-        existente.setRegion(equipo.getRegion());
-        existente.setFundacion(equipo.getFundacion());
+        return equipoRepository.findById(id)
+                .map(equipo -> {
 
-        return repo.save(existente);
+                    equipo.setNombre(equipoActualizado.getNombre());
+                    equipo.setRegion(equipoActualizado.getRegion());
+
+                    return equipoRepository.save(equipo);
+                })
+                .orElse(null);
     }
 
+    // ========================
+    // ELIMINAR
+    // ========================
     @Override
     public void eliminar(Integer id) {
-        repo.deleteById(id);
+        equipoRepository.deleteById(id);
     }
 }
+
+

@@ -32,13 +32,18 @@ public class JwtFilter implements Filter {
 
         String path = req.getRequestURI();
 
-        // Rutas públicas: login y registro (y lo que quieras dejar libre)
-        if (path.startsWith("/api/auth")) {
+        // --- RUTAS PÚBLICAS ---
+        if (
+                path.startsWith("/api/auth") ||     // login / register
+                path.startsWith("/swagger-ui") ||   // swagger UI
+                path.startsWith("/v3/api-docs") ||  // openapi docs
+                path.equals("/swagger-ui.html")
+        ) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Leer header Authorization
+        // --- HEADER AUTHORIZATION ---
         String authHeader = req.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -47,16 +52,16 @@ public class JwtFilter implements Filter {
             return;
         }
 
-        String token = authHeader.substring(7); // quita "Bearer "
+        String token = authHeader.substring(7);
 
-        // Validar token con JwtUtil
-        if (!jwtUtil.validarToken(token)) {
+        // --- VALIDACIÓN DEL TOKEN ---
+        if (!jwtUtil.validateToken(token)) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             res.getWriter().write("Token inválido");
             return;
         }
 
-        // Si todo bien, seguir con la petición
+        // Si el token es válido, continuar
         chain.doFilter(request, response);
     }
 }

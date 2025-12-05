@@ -5,45 +5,51 @@ import com.Kartconnecting.Backend.repository.UserRepository;
 import com.Kartconnecting.Backend.security.JwtUtil;
 import com.Kartconnecting.Backend.security.LoginRequest;
 import com.Kartconnecting.Backend.service.AuthService;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repo;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public AuthServiceImpl(UserRepository userRepository, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
+    public AuthServiceImpl(UserRepository repo, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.repo = repo;
+        this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
 
-    public String login(LoginRequest request) {
+    @Override
+    public User register(User usuario) {
 
-        System.out.println("LOGIN REQUEST: email=" + request.getEmail()
-                + " password=" + request.getPassword());
+        // validar correo
+        repo.findByEmail(usuario.getEmail()).ifPresent(u -> {
+            throw new RuntimeException("El correo ya está registrado");
+        });
 
-        // Buscar usuario por correo
-        User usuario = userRepository.findByEmail(request.getEmail());
+        // encriptar contraseña
+        String passEncriptada = passwordEncoder.encode(usuario.getPassword());
+        usuario.setPassword(passEncriptada);
 
-        if (usuario == null) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-
-        // Comparar contraseñas TAL CUAL están en la base
-        if (!usuario.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Password incorrecta");
-        }
-
-        // Generar el JWT
-        return jwtUtil.generateToken(usuario.getEmail());
+        return repo.save(usuario);
     }
 
     @Override
-    public User login(String email, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'login'");
+    public String login(LoginRequest request) {
+
+        User usuario = repo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // validar contraseña
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            throw new RuntimeException("Contraseña incorrecta");
+        }
+
+        // generar token
+        return jwtUtil.generateToken(usuario.getEmail());
     }
 }
-
 

@@ -36,10 +36,10 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera existente = obtenerPorId(id);
         if (existente == null) return null;
 
-        existente.setTorneo(carrera.getTorneo());
-        existente.setPista(carrera.getPista());
-        existente.setFecha(carrera.getFecha());
-        existente.setHora(carrera.getHora());
+        existente.setId_jugador(carrera.getId_jugador());
+        existente.setId_pista(carrera.getId_pista());
+        existente.setId_torneo(carrera.getId_torneo());
+        existente.setPosicion(carrera.getPosicion());
 
         return repo.save(existente);
     }

@@ -16,34 +16,51 @@ public class PistaServiceImpl implements PistaService {
         this.pistaRepository = pistaRepository;
     }
 
+    // ========================
+    // LISTAR
+    // ========================
     @Override
     public List<Pista> findAll() {
         return pistaRepository.findAll();
     }
 
+    // ========================
+    // OBTENER POR ID
+    // ========================
     @Override
     public Pista findById(Integer id) {
         return pistaRepository.findById(id).orElse(null);
     }
 
+    // ========================
+    // CREAR
+    // ========================
     @Override
     public Pista save(Pista pista) {
         return pistaRepository.save(pista);
     }
 
+    // ========================
+    // ACTUALIZAR (Update completo)
+    // ========================
     @Override
-    public Pista update(Integer id, Pista pista) {
+    public Pista update(Integer id, Pista pistaActualizada) {
 
-        Pista existente = pistaRepository.findById(id).orElse(null);
-        if (existente == null) return null;
+        return pistaRepository.findById(id)
+                .map(pista -> {
 
-        existente.setNombre(pista.getNombre());
-        existente.setEscenario(pista.getEscenario());
-        existente.setDificultad(pista.getDificultad());
+                    pista.setNombre(pistaActualizada.getNombre());
+                    pista.setEscenario(pistaActualizada.getEscenario());
+                    pista.setDificultad(pistaActualizada.getDificultad());
 
-        return pistaRepository.save(existente);
+                    return pistaRepository.save(pista);
+                })
+                .orElse(null);
     }
 
+    // ========================
+    // ELIMINAR
+    // ========================
     @Override
     public void delete(Integer id) {
         pistaRepository.deleteById(id);

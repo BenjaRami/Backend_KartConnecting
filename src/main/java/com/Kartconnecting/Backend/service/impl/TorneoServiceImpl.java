@@ -37,8 +37,8 @@ public class TorneoServiceImpl implements TorneoService {
         if (existente == null) return null;
 
         existente.setNombre(torneo.getNombre());
-        existente.setFechaInicio(torneo.getFechaInicio());
-        existente.setFechaFin(torneo.getFechaFin());
+        existente.setFecha_inicio(torneo.getFecha_inicio());
+        existente.setFecha_fin(torneo.getFecha_fin());
         existente.setPremio(torneo.getPremio());
 
         return repo.save(existente);

@@ -36,11 +36,10 @@ public class BusquedaJugadorServiceImpl implements BusquedaJugadorService {
         BusquedaJugador existente = obtenerPorId(id);
         if (existente == null) return null;
 
-        existente.setEquipo(busqueda.getEquipo());
-        existente.setDescripcion(busqueda.getDescripcion());
         existente.setEstado(busqueda.getEstado());
-        existente.setFecha(busqueda.getFecha());
-
+        existente.setId_equipo(busqueda.getId_equipo());
+        existente.setNivelMinimo(busqueda.getNivelMinimo());
+        existente.setRolNecesario(busqueda.getRolNecesario());
         return repo.save(existente);
     }
 

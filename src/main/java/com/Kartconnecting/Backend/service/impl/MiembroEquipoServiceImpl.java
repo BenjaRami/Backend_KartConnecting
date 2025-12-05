@@ -36,9 +36,9 @@ public class MiembroEquipoServiceImpl implements MiembroEquipoService {
         MiembroEquipo existente = obtenerPorId(id);
         if (existente == null) return null;
 
-        existente.setJugador(miembro.getJugador());
-        existente.setEquipo(miembro.getEquipo());
-        existente.setFechaIngreso(miembro.getFechaIngreso());
+        existente.setId_jugador(miembro.getId_jugador());
+        existente.setId_equipo(miembro.getId_equipo());
+        existente.setRol(miembro.getRol());
 
         return repo.save(existente);
     }

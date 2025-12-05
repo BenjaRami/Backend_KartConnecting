@@ -1,40 +1,25 @@
 package com.Kartconnecting.Backend.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "MIEMBROS_EQUIPO")
 public class MiembroEquipo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "miembros_seq")
-    @SequenceGenerator(name = "miembros_seq", sequenceName = "seq_miembros", allocationSize = 1)
-    @Column(name = "id_miembro")
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_MIEMBRO")
+    private Long id_miembro;
 
-    @ManyToOne
-    @JoinColumn(name = "id_jugador", nullable = false)
-    private Jugador jugador;
+    @Column(name = "ID_JUGADOR")
+    private Long id_jugador;
 
-    @ManyToOne
-    @JoinColumn(name = "id_equipo", nullable = false)
-    private Equipo equipo;
+    @Column(name = "ID_EQUIPO")
+    private Long id_equipo;
 
-    @Column(name = "fecha_ingreso")
-    private LocalDate fechaIngreso;
-
-    // ===== Getters y Setters =====
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public Jugador getJugador() { return jugador; }
-    public void setJugador(Jugador jugador) { this.jugador = jugador; }
-
-    public Equipo getEquipo() { return equipo; }
-    public void setEquipo(Equipo equipo) { this.equipo = equipo; }
-
-    public LocalDate getFechaIngreso() { return fechaIngreso; }
-    public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
+    @Column(name = "ROL")
+    private String rol;
 }
+
